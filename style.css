@@ -27,6 +27,7 @@ button {
 
 #btnGenera { background-color: #4CAF50; color: white; }
 #btnAuto { background-color: #2196F3; color: white; }
+#btnStop { background-color: #ff9800; color: white; }
 #btnReset { background-color: #f44336; color: white; }
 
 button:hover {
