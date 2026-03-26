@@ -33,7 +33,8 @@ function stopRun() {
 function reset() {
     clearInterval(interval);
     interval = null;
-x = 1000;
+
+    x = 1000;
     valori = [x];
     sequenza = [];
 
