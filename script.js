@@ -25,6 +25,11 @@ function autoRun() {
     interval = setInterval(generaPasso, 500);
 }
 
+function stopRun() {
+    clearInterval(interval);
+    interval = null;
+}
+
 function reset() {
     clearInterval(interval);
     interval = null;
