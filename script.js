@@ -44,29 +44,52 @@ function reset() {
     disegna();
 }
 
+let chart;
+
 function disegna() {
-    const canvas = document.getElementById("grafico");
-    const ctx = canvas.getContext("2d");
+    const ctx = document.getElementById("grafico").getContext("2d");
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (chart) chart.destroy();
 
-    if (valori.length < 2) return;
+    const labels = valori.map((_, i) => i);
 
-    let min = Math.min(...valori);
-    let max = Math.max(...valori);
-
-    let scalaX = canvas.width / (valori.length - 1);
-    let scalaY = canvas.height / (max - min + 1);
-
-    ctx.beginPath();
-
-    for (let i = 0; i < valori.length; i++) {
-        let px = i * scalaX;
-        let py = canvas.height - (valori[i] - min) * scalaY;
-
-        if (i === 0) ctx.moveTo(px, py);
-        else ctx.lineTo(px, py);
-    }
-
-    ctx.stroke();
+    chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Random Walk',
+                data: valori,
+                borderColor: 'green',
+                borderWidth: 2,
+                pointRadius: 0,
+                fill: false,
+                tension: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Passo'
+                    },
+                    grid: { display: true }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Valore'
+                    },
+                    grid: { display: true }
+                }
+            }
+        }
+    });
 }
