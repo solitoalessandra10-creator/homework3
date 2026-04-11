@@ -27,7 +27,6 @@
             color: #2c3e50;
         }
 
-        /* Pannello controlli in alto */
         .controls {
             display: flex;
             justify-content: center;
@@ -64,7 +63,6 @@
         #btnReset { background-color: #f44336; }
         button:hover { opacity: 0.8; transform: translateY(-1px); }
 
-        /* Card principale del grafico */
         .card {
             background: white;
             padding: 25px;
@@ -80,7 +78,6 @@
             width: 100%;
         }
 
-        /* Box inferiori affiancate */
         .output-row {
             display: flex;
             gap: 20px;
@@ -125,7 +122,7 @@
     <div class="controls">
         <div class="input-group">
             <label>Passi (n):</label>
-            <input type="number" id="numPassi" value="1000">
+            <input type="number" id="numPassi" placeholder="es. 1000">
         </div>
         <button id="btnGenera" onclick="eseguiSimulazione()">Genera ABM</button>
         <button id="btnReset" onclick="resetSimulazione()">Reset</button>
@@ -154,11 +151,17 @@
     let chart;
 
     function eseguiSimulazione() {
-        const n = parseInt(document.getElementById('numPassi').value) || 1000;
+        const inputN = document.getElementById('numPassi').value;
+        
+        // Controllo se l'utente ha inserito un numero
+        if (!inputN || inputN <= 0) {
+            alert("Per favore, inserisci un numero di passi valido prima di generare.");
+            return;
+        }
+
+        const n = parseInt(inputN);
         let x = 0;
         let datiValori = [0];
-        let datiSequenza = [];
-        
         let testoSequenza = "";
         let testoValori = "0\n";
 
@@ -166,9 +169,7 @@
             const passo = Math.random() < 0.5 ? -1 : 1;
             x += passo;
             
-            datiSequenza.push(passo);
             datiValori.push(x);
-
             testoSequenza += (passo > 0 ? "+1" : "-1") + " ";
             testoValori += x + "\n";
         }
@@ -186,6 +187,9 @@
             chart.destroy();
         }
 
+        // Se non ci sono punti (reset), non creare un nuovo oggetto Chart
+        if (punti.length === 0) return;
+
         chart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -193,7 +197,6 @@
                 datasets: [{
                     label: 'Random Walk',
                     data: punti,
-                    // MODIFICA QUI: Cambiato colore da verde a bordeaux
                     borderColor: '#800000', 
                     borderWidth: 1.5,
                     pointRadius: 0,
@@ -216,15 +219,22 @@
     }
 
     function resetSimulazione() {
-        if (chart) chart.destroy();
+        if (chart) {
+            chart.destroy();
+            chart = null; // Fondamentale per evitare sovrapposizioni post-reset
+        }
+        document.getElementById('numPassi').value = "";
         document.getElementById('sequenza').value = "";
         document.getElementById('valori').value = "";
-        // Disegna un grafico vuoto
-        disegnaGrafico([]);
+        
+        // Pulisce il canvas
+        const canvas = document.getElementById('grafico');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-    // Inizializza al caricamento
-    window.onload = () => eseguiSimulazione(); // Esegue subito la simulazione all'avvio
+    // Ora all'avvio NON viene chiamata eseguiSimulazione()
+    // La pagina rimarrà bianca/vuota finché non si preme il tasto
 </script>
 
 </body>
