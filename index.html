@@ -2,47 +2,42 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Walk - Simulazione Prezzo</title>
+    <title>Simulazione Random Walk</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-    <h1>📈 Random Walk <small>(Simulazione Prezzo)</small></h1>
+<div class="main-container">
+    <h1>Simulazione Random Walk &rarr; Moto Browniano</h1>
 
-    <div class="toolbar">
+    <div class="pulsanti">
         <div class="input-group">
-            <label for="numPassi">Passi per click:</label>
-            <input type="number" id="numPassi" value="10" min="1">
+            <label>Numero passi (n):</label>
+            <input type="number" id="numPassi" value="1000" min="1">
         </div>
-        <div class="actions">
-            <button id="btnGenera">Genera</button>
-            <button id="btnAuto">Auto</button>
-            <button id="btnStop">Stop</button>
-            <button id="btnReset">Reset</button>
-        </div>
+        <button id="btnGenera" onclick="generaPasso()">Genera ABM</button>
+        <button id="btnReset" onclick="reset()">Reset</button>
     </div>
 
-    <div class="main-layout">
-        <div class="side-panel">
-            <div class="log-box">
-                <h3>Sequenza (+1/-1)</h3>
-                <textarea id="sequenza" readonly></textarea>
-            </div>
-            <div class="log-box">
-                <h3>Valori x(i)</h3>
-                <textarea id="valori" readonly></textarea>
-            </div>
-        </div>
-
-        <div class="chart-container card">
-            <h3>Grafico Real-time</h3>
-            <canvas id="grafico"></canvas>
-        </div>
+    <div class="card chart-card">
+        <h3>Random Walk scalata su [0, T]</h3>
+        <canvas id="grafico"></canvas>
     </div>
 
-    <script src="script.js"></script>
+    <div class="output-row">
+        <div class="card info-box">
+            <h4>Sequenza (+1 / -1)</h4>
+            <textarea id="sequenza" readonly placeholder="In attesa di dati..."></textarea>
+        </div>
+        <div class="card info-box">
+            <h4>Valori x(i)</h4>
+            <textarea id="valori" readonly placeholder="In attesa di dati..."></textarea>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
