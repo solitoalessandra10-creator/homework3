@@ -2,42 +2,229 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulazione Random Walk</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .main-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        h1 {
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        /* Pannello controlli in alto */
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input {
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            width: 80px;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: white;
+            transition: 0.2s;
+        }
+
+        #btnGenera { background-color: #4CAF50; }
+        #btnReset { background-color: #f44336; }
+        button:hover { opacity: 0.8; transform: translateY(-1px); }
+
+        /* Card principale del grafico */
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            border: 1px solid #eaeaea;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+
+        /* Box inferiori affiancate */
+        .output-row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .info-box {
+            flex: 1;
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            text-align: left;
+            border: 1px solid #eaeaea;
+        }
+
+        .info-box h4 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            border: 1px solid #f0f0f0;
+            border-radius: 8px;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            background-color: #fafafa;
+            resize: none;
+            box-sizing: border-box;
+        }
+    </style>
 </head>
 <body>
 
 <div class="main-container">
     <h1>Simulazione Random Walk &rarr; Moto Browniano</h1>
 
-    <div class="pulsanti">
+    <div class="controls">
         <div class="input-group">
-            <label>Numero passi (n):</label>
-            <input type="number" id="numPassi" value="1000" min="1">
+            <label>Passi (n):</label>
+            <input type="number" id="numPassi" value="1000">
         </div>
-        <button id="btnGenera" onclick="generaPasso()">Genera ABM</button>
-        <button id="btnReset" onclick="reset()">Reset</button>
+        <button id="btnGenera" onclick="eseguiSimulazione()">Genera ABM</button>
+        <button id="btnReset" onclick="resetSimulazione()">Reset</button>
     </div>
 
-    <div class="card chart-card">
-        <h3>Random Walk scalata su [0, T]</h3>
-        <canvas id="grafico"></canvas>
+    <div class="card">
+        <h3 style="margin-top:0; color:#555;">Random Walk scalata su [0, T]</h3>
+        <div class="chart-container">
+            <canvas id="grafico"></canvas>
+        </div>
     </div>
 
     <div class="output-row">
-        <div class="card info-box">
+        <div class="info-box">
             <h4>Sequenza (+1 / -1)</h4>
-            <textarea id="sequenza" readonly placeholder="In attesa di dati..."></textarea>
+            <textarea id="sequenza" readonly></textarea>
         </div>
-        <div class="card info-box">
+        <div class="info-box">
             <h4>Valori x(i)</h4>
-            <textarea id="valori" readonly placeholder="In attesa di dati..."></textarea>
+            <textarea id="valori" readonly></textarea>
         </div>
     </div>
 </div>
 
-<script src="script.js"></script>
+<script>
+    let chart;
+
+    function eseguiSimulazione() {
+        const n = parseInt(document.getElementById('numPassi').value) || 1000;
+        let x = 0;
+        let datiValori = [0];
+        let datiSequenza = [];
+        
+        let testoSequenza = "";
+        let testoValori = "0\n";
+
+        for (let i = 0; i < n; i++) {
+            const passo = Math.random() < 0.5 ? -1 : 1;
+            x += passo;
+            
+            datiSequenza.push(passo);
+            datiValori.push(x);
+
+            testoSequenza += (passo > 0 ? "+1" : "-1") + " ";
+            testoValori += x + "\n";
+        }
+
+        document.getElementById('sequenza').value = testoSequenza;
+        document.getElementById('valori').value = testoValori;
+
+        disegnaGrafico(datiValori);
+    }
+
+    function disegnaGrafico(punti) {
+        const ctx = document.getElementById('grafico').getContext('2d');
+        
+        if (chart) {
+            chart.destroy();
+        }
+
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: punti.map((_, i) => i),
+                datasets: [{
+                    label: 'Random Walk',
+                    data: punti,
+                    borderColor: '#4CAF50',
+                    borderWidth: 1.5,
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { grid: { display: false } },
+                    y: { grid: { color: '#f0f0f0' } }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    }
+
+    function resetSimulazione() {
+        if (chart) chart.destroy();
+        document.getElementById('sequenza').value = "";
+        document.getElementById('valori').value = "";
+        // Disegna un grafico vuoto
+        disegnaGrafico([]);
+    }
+
+    // Inizializza al caricamento
+    window.onload = () => disegnaGrafico([]);
+</script>
+
 </body>
 </html>
