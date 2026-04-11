@@ -2,39 +2,47 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Random Walk</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Walk - Simulazione Prezzo</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-
 <body>
 
-<h1>📈 Random Walk (Simulazione Prezzo)</h1>
+    <h1>📈 Random Walk <small>(Simulazione Prezzo)</small></h1>
 
-<div class="pulsanti">
-    <input type="number" id="numPassi" placeholder="Numero passi" value="10" min="1">
-    <button id="btnGenera" onclick="generaPasso()">Genera</button>
-    <button id="btnAuto" onclick="autoRun()">Auto</button>
-    <button id="btnStop" onclick="stopRun()">Stop</button>
-    <button id="btnReset" onclick="reset()">Reset</button>
-</div>
+    <div class="toolbar">
+        <div class="input-group">
+            <label for="numPassi">Passi per click:</label>
+            <input type="number" id="numPassi" value="10" min="1">
+        </div>
+        <div class="actions">
+            <button id="btnGenera">Genera</button>
+            <button id="btnAuto">Auto</button>
+            <button id="btnStop">Stop</button>
+            <button id="btnReset">Reset</button>
+        </div>
+    </div>
 
-<h3>Sequenza (+1 / -1)</h3>
-<textarea id="sequenza" readonly></textarea>
+    <div class="main-layout">
+        <div class="side-panel">
+            <div class="log-box">
+                <h3>Sequenza (+1/-1)</h3>
+                <textarea id="sequenza" readonly></textarea>
+            </div>
+            <div class="log-box">
+                <h3>Valori x(i)</h3>
+                <textarea id="valori" readonly></textarea>
+            </div>
+        </div>
 
-<h3>Valori x(i)</h3>
-<textarea id="valori" readonly></textarea>
+        <div class="chart-container card">
+            <h3>Grafico Real-time</h3>
+            <canvas id="grafico"></canvas>
+        </div>
+    </div>
 
-<div class="card">
-    <h3>Grafico Random Walk</h3>
-    <canvas id="grafico"></canvas>
-</div>
-
-<script src="script.js"></script>
-
+    <script src="script.js"></script>
 </body>
 </html>
