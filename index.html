@@ -193,7 +193,8 @@
                 datasets: [{
                     label: 'Random Walk',
                     data: punti,
-                    borderColor: '#4CAF50',
+                    // MODIFICA QUI: Cambiato colore da verde a bordeaux
+                    borderColor: '#800000', 
                     borderWidth: 1.5,
                     pointRadius: 0,
                     fill: false,
@@ -223,7 +224,7 @@
     }
 
     // Inizializza al caricamento
-    window.onload = () => disegnaGrafico([]);
+    window.onload = () => eseguiSimulazione(); // Esegue subito la simulazione all'avvio
 </script>
 
 </body>
