@@ -1,68 +1,43 @@
-let x = 1000;
+let x = 0; // Partiamo da 0 come nell'immagine
 let valori = [x];
 let sequenza = [];
-let interval = null;
 let chart;
 
-// Inizializzazione
-document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("btnGenera").onclick = generaPasso;
-    document.getElementById("btnAuto").onclick = autoRun;
-    document.getElementById("btnStop").onclick = stopRun;
-    document.getElementById("btnReset").onclick = reset;
-    disegna(); // Disegna il punto iniziale
-});
-
 function generaPasso() {
-    const inputPassi = document.getElementById("numPassi");
-    let nPassi = parseInt(inputPassi.value) || 1;
+    // Reset preventivo per nuova generazione pulita
+    reset();
 
-    const txtSequenza = document.getElementById("sequenza");
-    const txtValori = document.getElementById("valori");
+    let nPassi = parseInt(document.getElementById("numPassi").value) || 1000;
+    let seqString = "";
+    let valString = "0\n";
 
     for (let k = 0; k < nPassi; k++) {
         let salto = Math.random() < 0.5 ? -1 : 1;
         sequenza.push(salto);
-
         x = x + salto;
         valori.push(x);
 
-        txtSequenza.value += (salto > 0 ? "+" + salto : salto) + "\n";
-        txtValori.value += x + "\n";
+        seqString += salto + (k % 10 === 9 ? "\n" : " ");
+        valString += x + "\n";
     }
 
-    // Auto-scroll delle textarea
-    txtSequenza.scrollTop = txtSequenza.scrollHeight;
-    txtValori.scrollTop = txtValori.scrollHeight;
+    document.getElementById("sequenza").value = seqString;
+    document.getElementById("valori").value = valString;
 
     disegna();
-}
-
-function autoRun() {
-    if (interval) return;
-    document.getElementById("btnAuto").classList.add("active");
-    interval = setInterval(generaPasso, 300);
-}
-
-function stopRun() {
-    clearInterval(interval);
-    interval = null;
-    document.getElementById("btnAuto").classList.remove("active");
 }
 
 function reset() {
-    stopRun();
-    x = 1000;
-    valori = [x];
+    x = 0;
+    valori = [0];
     sequenza = [];
     document.getElementById("sequenza").value = "";
     document.getElementById("valori").value = "";
-    disegna();
+    if (chart) chart.destroy();
 }
 
 function disegna() {
     const ctx = document.getElementById("grafico").getContext("2d");
-
     if (chart) chart.destroy();
 
     const labels = valori.map((_, i) => i);
@@ -72,24 +47,33 @@ function disegna() {
         data: {
             labels: labels,
             datasets: [{
-                label: 'Prezzo Asset',
+                label: 'Random Walk scalata',
                 data: valori,
-                borderColor: '#2ecc71',
-                backgroundColor: 'rgba(46, 204, 113, 0.1)',
-                borderWidth: 2,
+                borderColor: '#4CAF50',
+                borderWidth: 1.5,
                 pointRadius: 0,
-                fill: true,
-                tension: 0.2
+                fill: false,
+                tension: 0.1
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            animation: false, // Disattivata per rendere l'Auto Run fluido
+            plugins: {
+                legend: { display: true, position: 'top' }
+            },
             scales: {
-                x: { title: { display: true, text: 'Passo' } },
-                y: { title: { display: true, text: 'Valore' } }
+                x: {
+                    grid: { display: true, color: '#f0f0f0' },
+                    ticks: { maxTicksLimit: 10 } // Evita sovrapposizioni
+                },
+                y: {
+                    grid: { display: true, color: '#f0f0f0' }
+                }
             }
         }
     });
 }
+
+// Inizializza un grafico vuoto all'avvio
+window.onload = disegna;
