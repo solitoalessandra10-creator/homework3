@@ -6,6 +6,9 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -26,8 +29,10 @@
 <h3>Valori x(i)</h3>
 <textarea id="valori" readonly></textarea>
 
-<h3>Grafico</h3>
-<canvas id="grafico" width="600" height="300"></canvas>
+<div class="card">
+    <h3>Grafico Random Walk</h3>
+    <canvas id="grafico"></canvas>
+</div>
 
 <script src="script.js"></script>
 
